@@ -814,6 +814,10 @@ global with sharing class Einstein_PredictionService {
 	 */
 	global Einstein_PredictionResult predictIntent(String modelId, String text, Integer numResults, String sampleId) {
 		System.debug('Starting predict intent call with model ' + modelId);
+		//Fix prediction-unexpected-char. This error happens if the model is trained but the status is never checked explicitly
+		//Error message: Unexpected character ('<' (code 60)): expected a valid value (number, String, array, object, 'true', 'false' or 'null') at input location [1,2]
+		getModel(modelId);
+
 		Einstein_HttpBodyPartPrediction parts = new Einstein_HttpBodyPartPrediction(modelId, text, null, null, numResults, sampleId, Einstein_HttpBodyPartPrediction.Types.DOCUMENT);
 		Einstein_HttpClient client = new Einstein_HttpClient(this, '/intent', parts.build());
 		System.debug('Target URL is ' + client.getUrl());
